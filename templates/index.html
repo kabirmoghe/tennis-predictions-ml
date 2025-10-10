@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tennis Bracket Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎾 Tennis Bracket Predictor</h1>
+            <p class="subtitle">AI-powered tournament predictions</p>
+        </header>
+
+        <div class="card">
+            <h2>Select Tournament</h2>
+            <div class="form-group">
+                <label for="tournament">Tournament:</label>
+                <select id="tournament" name="tournament">
+                    {% for key, tournament in tournaments.items() %}
+                    <option value="{{ key }}">{{ tournament.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button id="predictBtn" class="btn-primary">
+                Generate Predictions
+            </button>
+        </div>
+
+        <div id="loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Analyzing bracket and predicting matches...</p>
+        </div>
+
+        <div id="results" class="card hidden">
+            <h2>Bracket Predictions</h2>
+            <div id="tournamentInfo" class="info-box"></div>
+            <div id="bracket" class="bracket-container"></div>
+        </div>
+
+        <div id="error" class="error-box hidden"></div>
+    </div>
+
+    <script>
+        const predictBtn = document.getElementById('predictBtn');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+        const errorBox = document.getElementById('error');
+        const bracket = document.getElementById('bracket');
+        const tournamentInfo = document.getElementById('tournamentInfo');
+        const tournamentSelect = document.getElementById('tournament');
+
+        function getRoundName(roundIndex, totalRounds) {
+            const roundNames = {
+                0: 'Round of 128',
+                1: 'Round of 64',
+                2: 'Round of 32',
+                3: 'Round of 16',
+                4: 'Quarterfinals',
+                5: 'Semifinals',
+                6: 'Finals',
+                7: 'Champion'
+            };
+            return roundNames[roundIndex] || `Round ${roundIndex}`;
+        }
+
+        function renderBracket(initialPlayers, bracketData) {
+            bracket.innerHTML = '';
+            
+            if (!bracketData || bracketData.length === 0) {
+                bracket.innerHTML = '<p>No bracket data available</p>';
+                return;
+            }
+
+            // Combine initial players with bracket results
+            const allRounds = [initialPlayers, ...bracketData];
+            const totalRounds = allRounds.length;
+            
+            // Create bracket wrapper
+            const bracketWrapper = document.createElement('div');
+            bracketWrapper.className = 'bracket-wrapper';
+
+            // Render each round from left to right (Round 1 -> Champion)
+            for (let roundIndex = 0; roundIndex < totalRounds; roundIndex++) {
+                const roundPlayers = allRounds[roundIndex];
+                const nextRoundPlayers = roundIndex < totalRounds - 1 ? allRounds[roundIndex + 1] : null;
+                
+                const roundDiv = document.createElement('div');
+                roundDiv.className = 'bracket-round';
+                
+                // Add round header
+                const roundHeader = document.createElement('div');
+                roundHeader.className = 'round-header';
+                roundHeader.textContent = getRoundName(roundIndex, totalRounds);
+                roundDiv.appendChild(roundHeader);
+
+                // Add players in this round
+                const playersContainer = document.createElement('div');
+                playersContainer.className = 'players-container';
+                
+                // Group players into matchups (pairs)
+                for (let i = 0; i < roundPlayers.length; i += 2) {
+                    const matchupDiv = document.createElement('div');
+                    matchupDiv.className = 'matchup';
+                    
+                    // Player 1
+                    if (i < roundPlayers.length) {
+                        const player1Div = document.createElement('div');
+                        player1Div.className = 'bracket-player';
+                        
+                        // Check if this player won (is in next round)
+                        const winner = nextRoundPlayers ? nextRoundPlayers[Math.floor(i / 2)] : null;
+                        if (winner && winner === roundPlayers[i]) {
+                            player1Div.classList.add('winner');
+                        } else if (roundIndex === totalRounds - 1) {
+                            player1Div.classList.add('champion');
+                        }
+                        
+                        player1Div.textContent = roundPlayers[i];
+                        matchupDiv.appendChild(player1Div);
+                    }
+                    
+                    // Player 2 (if exists)
+                    if (i + 1 < roundPlayers.length) {
+                        const player2Div = document.createElement('div');
+                        player2Div.className = 'bracket-player';
+                        
+                        // Check if this player won (is in next round)
+                        const winner = nextRoundPlayers ? nextRoundPlayers[Math.floor(i / 2)] : null;
+                        if (winner && winner === roundPlayers[i + 1]) {
+                            player2Div.classList.add('winner');
+                        }
+                        
+                        player2Div.textContent = roundPlayers[i + 1];
+                        matchupDiv.appendChild(player2Div);
+                    }
+                    
+                    playersContainer.appendChild(matchupDiv);
+                }
+
+                roundDiv.appendChild(playersContainer);
+                bracketWrapper.appendChild(roundDiv);
+            }
+
+            bracket.appendChild(bracketWrapper);
+        }
+
+        predictBtn.addEventListener('click', async () => {
+            const tournamentId = tournamentSelect.value;
+            
+            // Hide previous results and errors
+            results.classList.add('hidden');
+            errorBox.classList.add('hidden');
+            loading.classList.remove('hidden');
+            predictBtn.disabled = true;
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tournament_id: tournamentId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Prediction failed');
+                }
+
+                // Display results
+                tournamentInfo.innerHTML = `
+                    <strong>${data.tournament}</strong><br>
+                    Players in draw: ${data.num_players}<br>
+                    <strong>🏆 Predicted Champion:</strong> ${data.output[data.output.length - 1][0]}
+                `;
+                
+                // Render the bracket
+                renderBracket(data.initial_players, data.output);
+                results.classList.remove('hidden');
+
+            } catch (error) {
+                errorBox.textContent = `Error: ${error.message}`;
+                errorBox.classList.remove('hidden');
+            } finally {
+                loading.classList.add('hidden');
+                predictBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
+
+
