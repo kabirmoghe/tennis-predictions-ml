@@ -1,4 +1,4 @@
-# 🎾 Predicting Tennis Match Outcomes with Machine Learning
+# 🎾 Predicting Tennis Match Outcomes with ML
 
 **Exploring the "Moneyball" of Tennis — can performance statistics alone explain why the top players win?**
 
