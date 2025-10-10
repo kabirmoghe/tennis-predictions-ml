@@ -6,7 +6,7 @@
 
 ## 📘 Overview
 
-This project applies machine learning to predict the outcome of ATP Tour matches based purely on **performance data**, not by any measure of player identity. By transforming 20 years of ATP match data (pre-2023) into **player-level statistical profiles**, the goal was to see whether win/loss results could be explained — and predicted — through **momentum, surface-specific performance, and match-level consistency**.
+This project applies **machine learning** to predict the outcome of ATP Tour matches based purely on **performance data**, not by any measure of player identity. By transforming 20 years of ATP match data (pre-2023) into **player-level statistical profiles**, the goal was to see whether win/loss results could be explained — and predicted — through **momentum, surface-specific performance, and match-level consistency**.
 
 Essentially an analytical dive into the dynamics of competition:  
 > “If we strip away names and reputations, do the numbers still tell us who wins?”
