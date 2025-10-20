@@ -4,7 +4,7 @@
 
 ---
 
-## 📘 Overview
+## Overview
 
 This project applies **machine learning** to predict the outcome of ATP Tour matches based purely on **performance data**, not by any measure of player identity. By transforming 20 years of ATP match data (pre-2023) into **player-level statistical profiles**, the goal was to see whether win/loss results could be explained — and predicted — through **momentum, surface-specific performance, and match-level consistency**.
 
@@ -13,7 +13,7 @@ Essentially an analytical dive into the dynamics of competition:
 
 ---
 
-## 🧠 Core Components
+## Core Components
 
 ### 1. Data Engineering & Feature Design
 
@@ -44,7 +44,7 @@ Essentially an analytical dive into the dynamics of competition:
 
 ---
 
-## 🚀 Running the Web Application
+## Running the Web App
 
 To run the interactive bracket simulator locally:
 
@@ -60,15 +60,14 @@ Then navigate to `http://localhost:5000` to simulate the Wimbledon 2023 bracket 
 
 ---
 
-## 📊 Key Insights
+## Key Insights
 
-- Player **momentum and surface specialization** were stronger predictors of victory than ranking alone.  
+- Player **momentum, game win %, and surface specialization** were stronger predictors of victory than ranking alone.  
 - Models could reliably predict **>70%** of outcomes using pure statistical profiles.
-- Demonstrates the potential for **quantitative performance scouting** in tennis, akin to *Moneyball*’s influence in baseball.
 
 ---
 
-## 🧩 Project Structure
+## Project Structure
 
 ```text
 📂 tennis-ml/
