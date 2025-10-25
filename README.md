@@ -37,8 +37,8 @@ Essentially an analytical dive into the dynamics of competition:
 
 ### 3. Interactive Bracket Predictions UI (Flask)
 
-- Built a toy **Flask web application** (`app.py`) that brings the model to life.
-- Users can simulate the **entire Wimbledon 2023 tournament bracket** (128 players) in real-time.
+- Built toy **Flask web application** (`app.py`) that for demonstrating model capabilities.
+- Users can simulate the Wimbledon 2023 tournament bracket (128 players) as an example.
 - The app loads pre-trained models (`models/final_iter.pkl`) and player performance profiles to predict match outcomes round-by-round.
 - Features an interactive UI showing bracket progression, demonstrating how player-level performance metrics drive **probabilistic match predictions** in a real tournament structure.
 
@@ -46,7 +46,7 @@ Essentially an analytical dive into the dynamics of competition:
 
 ## Running the Web App
 
-To run the interactive bracket simulator locally:
+To run the example interactive bracket simulator locally:
 
 ```bash
 # Install dependencies
@@ -62,7 +62,7 @@ Then navigate to `http://localhost:5000` to simulate the Wimbledon 2023 bracket 
 
 ## Key Insights
 
-- Player **momentum, game win %, and surface specialization** were stronger predictors of victory than ranking alone.  
+- Player **momentum, game win %, and surface specialization** were some of the stronger predictors of victory, beyond face-value measures like ranking alone.  
 - Models could reliably predict **>70%** of outcomes using pure statistical profiles.
 
 ---
@@ -70,13 +70,13 @@ Then navigate to `http://localhost:5000` to simulate the Wimbledon 2023 bracket 
 ## Project Structure
 
 ```text
-📂 tennis-ml/
- ┣ 📄 app.py                    # Flask web app for bracket simulation
- ┣ 📄 ml_tools.py               # Core model training, inference, and bracket logic
- ┣ 📂 models/                   # Trained models (final_iter.pkl, etc.)
- ┣ 📂 data/                     # ATP match data, player profiles, rankings
- ┣ 📂 notebooks/                # Exploratory data analysis & model experimentation
- ┣ 📂 templates/                # HTML templates for Flask app
- ┣ 📂 static/                   # CSS styling for web interface
- ┗ 📄 requirements.txt          # Python dependencies
+tennis-ml/
+ app.py                    # Flask web app for bracket simulation
+ ml_tools.py               # Core model training, inference, and bracket logic
+ models/                   # Trained models (final_iter.pkl, etc.)
+ data/                     # ATP match data, player profiles, rankings
+ notebooks/                # Exploratory data analysis & model experimentation
+ templates/                # HTML templates for Flask app
+ static/                   # CSS styling for web interface
+ requirements.txt          # Python dependencies
 ```
